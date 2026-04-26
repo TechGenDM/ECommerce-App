@@ -33,8 +33,11 @@ export default function ProductDetails() {
   }
 
   useEffect(() => {
+    setLoading(true)
+    setSelectedSize(null)
+    setActiveImageIndex(0)
     fetchProduct()
-  }, [id])
+   }, [id])
 
   if (loading) {
     return (
