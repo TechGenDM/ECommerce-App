@@ -12,7 +12,7 @@ export const clerkWebhook = async (req: Request, res: Response) => {
       const userData = {
         clerkId: evt.data.id,
         email: evt.data.email_addresses[0]?.email_address,
-        name: evt.data?.first_name + " " + evt.data?.last_name,
+        name: [evt.data?.first_name, evt.data?.last_name].filter(val => val && val !== "null").join(" ").trim() || "User",
         image: evt.data?.image_url,
       }
 
