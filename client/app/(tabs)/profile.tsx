@@ -1,19 +1,33 @@
-import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 import React from 'react'
-import { dummyUser } from '@/assets/assets'
-import { useRouter } from 'expo-router'
+import { useRouter, Redirect } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Header from '@/components/Header'
 import { Ionicons } from '@expo/vector-icons'
 import { COLORS, PROFILE_MENU } from '@/constants'
+import { useAuth, useUser } from '@clerk/clerk-expo'
 
 export default function Profile() {
 
-  const {user} = {user: dummyUser}
+  const { user, isLoaded } = useUser()
+  const { signOut, isSignedIn } = useAuth()
   const router = useRouter()
 
-  const handleLogout = () => {
-    console.log("Logout pressed")
+  if (!isLoaded) {
+    return (
+      <SafeAreaView className="flex-1 bg-surface justify-center items-center">
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </SafeAreaView>
+    )
+  }
+
+  if (!isSignedIn) {
+    return <Redirect href="/(auth)/sign-in" />
+  }
+
+  const handleLogout = async () => {
+    await signOut()
+    router.replace('/(auth)/sign-in')
   }
 
   return (
@@ -25,18 +39,18 @@ export default function Profile() {
         <View className="items-center mt-6 mb-8">
           <View className="relative">
             <Image 
-              source={{uri: user.imageUrl}} 
+              source={{uri: user?.imageUrl || 'https://via.placeholder.com/150'}} 
               className="w-28 h-28 rounded-full border-4 border-white"
             />
             <TouchableOpacity className="absolute bottom-0 right-0 bg-primary w-8 h-8 rounded-full items-center justify-center border-2 border-white shadow-sm">
               <Ionicons name="camera" size={16} color="white" />
             </TouchableOpacity>
           </View>
-          <Text className="text-2xl font-bold text-primary mt-4">{user.name}</Text>
-          <Text className="text-secondary text-base">{user.email}</Text>
+          <Text className="text-2xl font-bold text-primary mt-4">{user?.fullName || user?.firstName || 'User'}</Text>
+          <Text className="text-secondary text-base">{user?.primaryEmailAddress?.emailAddress}</Text>
 
           {/* Admin Panel Button - only shown for admin users */}
-          {user.publicMetadata?.role === 'admin' && (
+          {user?.publicMetadata?.role === 'admin' && (
             <TouchableOpacity
               onPress={() => router.push('/admin')}
               className="mt-4 flex-row items-center bg-primary px-6 py-2.5 rounded-full shadow-sm"

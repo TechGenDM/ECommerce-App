@@ -4,11 +4,12 @@ import { HeaderProps } from '@/constants/types'
 import { Ionicons } from '@expo/vector-icons'
 import { COLORS } from '@/constants'
 import { useRouter } from 'expo-router'
+import { useCart } from '@/context/CartContext'
 
 export default function Header({title, showBack, showSearch, showCart, showMenu, showLogo}: HeaderProps) {
 
     const router = useRouter()
-    const { itemsCount } = {itemsCount: 6}
+    const { itemCount } = useCart()
 
   return (
     <View className='flex-row items-center justify-between px-4 py-3 bg-white'>
@@ -58,7 +59,7 @@ export default function Header({title, showBack, showSearch, showCart, showMenu,
                 <View className='relative'>
                     <Ionicons name='bag-outline' size={24} color={COLORS.primary}/>
                     <View className='absolute -top-1 -right-1 bg-accent w-4 h-4 rounded-full'>
-                        <Text className='text-white text-[10px] font-bold'>{itemsCount}</Text>
+                        <Text className='text-white text-[10px] font-bold'>{itemCount}</Text>
                     </View>
                 </View>
             </TouchableOpacity>
