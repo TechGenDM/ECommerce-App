@@ -11,6 +11,8 @@ export default function SignUp() {
   const { isLoaded, signUp, setActive } = useSignUp()
   const router = useRouter()
 
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [emailAddress, setEmailAddress] = useState('')
   const [password, setPassword] = useState('')
   const [pendingVerification, setPendingVerification] = useState(false)
@@ -24,6 +26,8 @@ export default function SignUp() {
     setLoading(true)
     try {
       await signUp.create({
+        firstName,
+        lastName,
         emailAddress,
         password,
       })
@@ -146,6 +150,34 @@ export default function SignUp() {
           </View>
 
           <View className="mb-6">
+            <View className="flex-row gap-4 mb-4">
+              <View className="flex-1">
+                <Text className="text-primary font-medium mb-2 ml-1">First Name</Text>
+                <View className="flex-row items-center bg-white border border-gray-200 rounded-2xl px-4 h-14 shadow-sm">
+                  <Ionicons name="person-outline" size={20} color={COLORS.secondary} />
+                  <TextInput
+                    className="flex-1 ml-3 text-primary text-base"
+                    value={firstName}
+                    placeholder="First Name"
+                    placeholderTextColor="#9ca3af"
+                    onChangeText={setFirstName}
+                  />
+                </View>
+              </View>
+              <View className="flex-1">
+                <Text className="text-primary font-medium mb-2 ml-1">Last Name</Text>
+                <View className="flex-row items-center bg-white border border-gray-200 rounded-2xl px-4 h-14 shadow-sm">
+                  <TextInput
+                    className="flex-1 text-primary text-base"
+                    value={lastName}
+                    placeholder="Last Name"
+                    placeholderTextColor="#9ca3af"
+                    onChangeText={setLastName}
+                  />
+                </View>
+              </View>
+            </View>
+
             <Text className="text-primary font-medium mb-2 ml-1">Email Address</Text>
             <View className="flex-row items-center bg-white border border-gray-200 rounded-2xl px-4 h-14 mb-4 shadow-sm">
               <Ionicons name="mail-outline" size={20} color={COLORS.secondary} />
@@ -178,9 +210,9 @@ export default function SignUp() {
           </View>
 
           <TouchableOpacity
-            className={`bg-primary h-14 rounded-full items-center justify-center shadow-md mb-6 ${(!emailAddress || !password) ? 'opacity-70' : ''}`}
+            className={`bg-primary h-14 rounded-full items-center justify-center shadow-md mb-6 ${(!emailAddress || !password || !firstName || !lastName) ? 'opacity-70' : ''}`}
             onPress={onSignUpPress}
-            disabled={!emailAddress || !password || loading}
+            disabled={!emailAddress || !password || !firstName || !lastName || loading}
           >
             {loading ? (
               <ActivityIndicator color="white" />
